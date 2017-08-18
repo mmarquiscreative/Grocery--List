@@ -1,5 +1,24 @@
 var dataController = (function(){
     var ingredients = {
+        apple: new Ingredient('Apple', '', '', 1.29),
+        avocado: new Ingredient('Avocado', '', '', 0),
+        banana: new Ingredient('Banana', '', '', 0),
+        romaine: new Ingredient('Romaine Lettuce', 'Cup', 'Cups', 0),
+        babySpinach: new Ingredient('Baby Spinach', 'Cup', 'Cups', 0),
+        garlic: new Ingredient('Garlic', 'Clove', 'Cloves', 0),
+        kale: new Ingredient('Kale', 'Cup', 'Cups', 0),
+        oregano: new Ingredient('Oregano', 'tsp', 'tsp', 0),
+        dryMustard: new Ingredient('Dry Mustard', 'tsp', 'tsp', 0),
+        nutritionalYeast: new Ingredient('Nutritional Yeast', 'Tbsp', 'Tbsp', 0),
+        cornmeal: new Ingredient('Cornmeal', 'Cup', 'Cups', 0),
+        blackBeans: new Ingredient('Black Beans', 'Cup', 'Cups', 0),
+        oats: new Ingredient('Oats', 'Cup', 'Cups', 0),
+        blueberries: new Ingredient('Blueberries', 'Cup', 'Cups', 0),
+        raisins: new Ingredient('Raisins', 'Cup', 'Cups', 0),
+        dates: new Ingredient('Date\(s\)', '', '', 0),
+        walnuts: new Ingredient('Walnuts', 'Tbsp', 'Tbsp', 0),
+        sunflowerSeeds: new Ingredient('Sunflower Seeds', 'Tbsp', 'Tbsp', 0),
+        flaxSeeds: new Ingredient('Flaxseeds', 'Tbsp', 'Tbsp', 0)
     };
     
     
@@ -17,33 +36,40 @@ var dataController = (function(){
     }
     
     
-    ingredients.apple = new Ingredient('Apple', '', '', 1.29);
-    ingredients.avocado = new Ingredient('Avocado', '', '', 0);
-    ingredients.banana = new Ingredient('Banana', '', '', 0);
-    ingredients.romaine = new Ingredient('Romaine Lettuce', 'Cup', 'Cups', 0);
-    ingredients.babySpinach = new Ingredient('Baby Spinach', 'Cup', 'Cups', 0);
-    ingredients.garlic = new Ingredient('Garlic', 'Clove', 'Cloves', 0);
-    ingredients.kale = new Ingredient('Kale', 'Cup', 'Cups', 0);
-    ingredients.oregano = new Ingredient('Oregano', 'tsp', 'tsp', 0);
-    ingredients.dryMustard = new Ingredient('Dry Mustard', 'tsp', 'tsp', 0);
-    ingredients.nutritionalYeast = new Ingredient('Nutritional Yeast', 'Tbsp', 'Tbsp', 0);
-    ingredients.cornmeal = new Ingredient('Cornmeal', 'Cup', 'Cups', 0);
+    
     
     
     var recipes = {
+        greenGorilla: [
+            (new recipeItem(ingredients.apple, 1)), 
+            (new recipeItem(ingredients.banana, 1)), 
+            (new recipeItem(ingredients.avocado, .5)), 
+            (new recipeItem(ingredients.romaine, 5)), 
+            (new recipeItem(ingredients.babySpinach, 5))],
+    
+        polentaFrittata: [
+            (new recipeItem(ingredients.garlic, 6)), 
+            (new recipeItem(ingredients.kale, 4)), 
+            (new recipeItem(ingredients.oregano, 1)), 
+            (new recipeItem(ingredients.dryMustard, 1)), 
+            (new recipeItem(ingredients.nutritionalYeast, 3)),
+            (new recipeItem(ingredients.cornmeal, 1))],
+        
+        breakfastBars: [
+            (new recipeItem(ingredients.blackBeans, 1)), 
+            (new recipeItem(ingredients.banana, 1)), 
+            (new recipeItem(ingredients.oats, 1)), 
+            (new recipeItem(ingredients.blueberries, 1)), 
+            (new recipeItem(ingredients.raisins, .25)),
+            (new recipeItem(ingredients.dates, 2)),
+            (new recipeItem(ingredients.walnuts, 1)),
+            (new recipeItem(ingredients.sunflowerSeeds, 2)),
+            (new recipeItem(ingredients.flaxSeeds, 2))],
+        
+        
     };
     
-    recipes.GreenGorrilla = [(new recipeItem(ingredients.apple, 1)), (new recipeItem(ingredients.banana, 1)), (new recipeItem(ingredients.avocado, .5)), (new recipeItem(ingredients.romaine, 5)), (new recipeItem(ingredients.babySpinach, 5))];
-    
-    recipes.PolentaFrittata = [
-        (new recipeItem(ingredients.garlic, 6)), 
-        (new recipeItem(ingredients.kale, 4)), 
-        (new recipeItem(ingredients.oregano, 1)), 
-        (new recipeItem(ingredients.dryMustard, 1)), 
-        (new recipeItem(ingredients.nutritionalYeast, 3)),
-        (new recipeItem(ingredients.cornmeal, 1))];
-    
-    console.log(recipes.GreenGorrilla);
+    console.log(recipes.greenGorilla);
     
     var groceryList = [];
     
@@ -98,9 +124,9 @@ var dataController = (function(){
     };
     
     
-    updateGroceryList(recipes.GreenGorrilla);
-    updateGroceryList(recipes.PolentaFrittata);
-     updateGroceryList(recipes.PolentaFrittata);
+    updateGroceryList(recipes.greenGorilla);
+    updateGroceryList(recipes.polentaFrittata);
+     updateGroceryList(recipes.breakfastBars);
     compileList(groceryList);
     
     
