@@ -125,26 +125,59 @@ var dataController = (function(){
     
     
     updateGroceryList(recipes.greenGorilla);
-    updateGroceryList(recipes.polentaFrittata);
+    
      updateGroceryList(recipes.breakfastBars);
     compileList(groceryList);
     
     
     return {
         ingredients: ingredients,
-        recipes: recipes
+        recipes: recipes,
+        groceryList: groceryList
     }
 })();
 
 var UIController = (function(){
+    var HTMLstrings = {
+        HTMLelementIDs:{
+            recipeChoices: '#recipeChoices'
+        },
+        recipeNames: {
+            greenGorilla: 'Green Gorilla (smoothie)',
+            
+        }
+    };
     
+function addListItem(listID, inputArray){
+    inputArray.forEach(function(cur){
+        var currentList = document.querySelector(listID).innerHTML;
+        
+        currentList += ('<li>' + cur.quantity + ' ' +cur.unit + ' ' + cur.name + '</li>');
+        document.querySelector(listID).innerHTML = currentList;
+        console.log(currentList);
+        console.log(cur.name);
+    });
+};
+    
+function addNewRecipeBtn(name, object){
+    document.querySelector(HTMLstrings.HTMLelementIDs.recipeChoices).child
+};
+    
+    return {
+        addListItem: addListItem
+    }
 })();
 
 var appController = (function(dataCtrl, UICtrl){
+    function testList(){
+        UICtrl.addListItem('#groceryList', dataCtrl.groceryList);
+    };
+    
     return{
-        dataCtrl: dataCtrl
+        dataCtrl: dataCtrl,
+        testList: testList
     }
 })(dataController, UIController);
 
-
+appController.testList();
 
