@@ -22,7 +22,6 @@ var dataController = (function(){
     };
     
     
-    
     function Ingredient(name, unit, unitPlural, price){
         this.name = name;
         this.unit = unit;
@@ -34,10 +33,6 @@ var dataController = (function(){
         this.ingredientObj = ingredientObj;
         this.ingredientObj.quantity = quantity;
     }
-    
-    
-    
-    
     
     var recipes = {
         greenGorilla: [
@@ -65,9 +60,9 @@ var dataController = (function(){
             (new recipeItem(ingredients.walnuts, 1)),
             (new recipeItem(ingredients.sunflowerSeeds, 2)),
             (new recipeItem(ingredients.flaxSeeds, 2))],
-        
-        
     };
+    
+    var recipeQueue = [];
     
     console.log(recipes.greenGorilla);
     
@@ -107,7 +102,12 @@ var dataController = (function(){
         console.log(groceryList);
     };
     
-    
+    function combineRecipes(){
+        recipeQueue.forEach(function(cur){
+            updateGroceryList(cur);
+        });
+        
+    }
     
     function compileList(groceryArray){
         groceryArray.forEach(function(cur){
@@ -124,27 +124,31 @@ var dataController = (function(){
     };
     
     
-    updateGroceryList(recipes.greenGorilla);
-    
-     updateGroceryList(recipes.breakfastBars);
-    compileList(groceryList);
-    
     
     return {
         ingredients: ingredients,
         recipes: recipes,
-        groceryList: groceryList
+        groceryList: groceryList,
+        recipeQueue: recipeQueue,
+        combineRecipes: combineRecipes,
+        compileList: compileList
     }
 })();
 
 var UIController = (function(){
     var HTMLstrings = {
         HTMLelementIDs:{
-            recipeChoices: '#recipeChoices'
+            recipeChoices: '#recipeChoices',
+            recipeList: '#recipeList',
+            recipeBtns: '#recipeBtns'
         },
         recipeNames: {
             greenGorilla: 'Green Gorilla (smoothie)',
             
+        },
+        HTMLcode: {
+            recipeList1: '<div class="" id=""><p>',
+            recipeList2: '</p></div>'
         }
     };
     
@@ -163,21 +167,58 @@ function addNewRecipeBtn(name, object){
     document.querySelector(HTMLstrings.HTMLelementIDs.recipeChoices).child
 };
     
+    
+function innerHTML(target, newHTML){
+    var curHTML = document.querySelector(target).innerHTML
+    document.querySelector(target).innerHTML = curHTML + newHTML;
+};    
     return {
-        addListItem: addListItem
+        HTMLstrings: HTMLstrings,
+        addListItem: addListItem,
+        innerHTML: innerHTML
     }
 })();
 
 var appController = (function(dataCtrl, UICtrl){
-    function testList(){
+function updateGroceryList(){
         UICtrl.addListItem('#groceryList', dataCtrl.groceryList);
     };
+  
     
+function updateRecipeList(whichRecipe){
+    console.log('running updateRecipeList'); 
+    console.log(whichRecipe);
+    // 1. Update Recipe UI
+   var recipeString = (UICtrl.HTMLstrings.HTMLcode.recipeList1 + whichRecipe + UICtrl.HTMLstrings.HTMLcode.recipeList2);
+    UICtrl.innerHTML(UICtrl.HTMLstrings.HTMLelementIDs.recipeList, recipeString);
+    
+    // 2. Add recipe to recipe queue
+    dataCtrl.recipeQueue.push(dataCtrl.recipes[whichRecipe]);
+    console.log(dataCtrl.recipeQueue);
+    
+    // 3. Update groceryList
+    dataCtrl.combineRecipes();
+    
+    // 4. Update Grocery List UI
+    updateGroceryList();
+    dataCtrl.compileList(dataCtrl.groceryList);
+        /* UICtrl.addListItem('#recipeList', dataCtrl.groceryList);*/
+    };
+    
+    function init(){
+        document.querySelector(UICtrl.HTMLstrings.HTMLelementIDs.recipeBtns).addEventListener('click', function(){
+            updateRecipeList(event.target.id);
+        });
+    };
     return{
         dataCtrl: dataCtrl,
-        testList: testList
+        updateGroceryList: updateGroceryList,
+        updateRecipeList: updateRecipeList,
+        init: init
     }
 })(dataController, UIController);
 
-appController.testList();
+
+appController.init();
+
 

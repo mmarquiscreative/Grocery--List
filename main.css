@@ -1,4 +1,14 @@
 .recipeBtn {
     width: 100%;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    font-size: 2rem !important;
 };
 
+#recipeList > div {
+    background-color: aqua !important;
+    color: aqua !important;
+}
+
+#recipeList {
+   }
