@@ -63,6 +63,7 @@ var dataController = (function(){
     };
     
     var recipeQueue = [];
+    var holdingQueue = [];
     
     console.log(recipes.greenGorilla);
     
@@ -102,9 +103,15 @@ var dataController = (function(){
         console.log(groceryList);
     };
     
+    function toArray(){
+        
+    }
+    
     function combineRecipes(){
         recipeQueue.forEach(function(cur){
-            updateGroceryList(cur);
+            cur.forEach(function(cur){
+                holdingQueue.push(cur);
+            });
         });
         
     }
@@ -131,7 +138,9 @@ var dataController = (function(){
         groceryList: groceryList,
         recipeQueue: recipeQueue,
         combineRecipes: combineRecipes,
-        compileList: compileList
+        compileList: compileList,
+        holdingQueue: holdingQueue,
+        updateGroceryList: updateGroceryList
     }
 })();
 
@@ -195,11 +204,13 @@ function updateRecipeList(whichRecipe){
     // 2. Add recipe to recipe queue
     dataCtrl.recipeQueue.push(dataCtrl.recipes[whichRecipe]);
     console.log(dataCtrl.recipeQueue);
+    console.log(dataCtrl.holdingQueue);
     
     // 3. Update groceryList
     dataCtrl.combineRecipes();
     
     // 4. Update Grocery List UI
+    dataCtrl.updateGroceryList(dataCtrl.holdingQueue);
     updateGroceryList();
     dataCtrl.compileList(dataCtrl.groceryList);
         /* UICtrl.addListItem('#recipeList', dataCtrl.groceryList);*/
