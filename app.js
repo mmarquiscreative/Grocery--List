@@ -21,19 +21,6 @@ var dataController = (function(){
         flaxSeeds: new Ingredient('Flaxseeds', 'Tbsp', 'Tbsp', 0)
     };
     
-    
-    function Ingredient(name, unit, unitPlural, price){
-        this.name = name;
-        this.unit = unit;
-        this.unitPlural = unitPlural;
-        this.price = price;
-    }
-    
-    function recipeItem(ingredientObj, quantity){
-        this.ingredientObj = ingredientObj;
-        this.ingredientObj.quantity = quantity;
-    }
-    
     var recipes = {
         greenGorilla: [
             (new recipeItem(ingredients.apple, 1)), 
@@ -64,17 +51,30 @@ var dataController = (function(){
     
     var recipeQueue = [];
     var holdingQueue = [];
-    
-    console.log(recipes.greenGorilla);
-    
     var groceryList = [];
+    
+    
+    function Ingredient(name, unit, unitPlural, price){
+        this.name = name;
+        this.unit = unit;
+        this.unitPlural = unitPlural;
+        this.price = price;
+    }
+    
+    function recipeItem(ingredientObj, quantity){
+        this.ingredientObj = ingredientObj;
+        this.ingredientObj.quantity = quantity;
+    }
+    
+
     
     function updateGroceryList(recipe){
         var i = 0;
         var updateQuantity = 0;
         var addIngredient = 0;
-        
-        console.log(recipe[0].name)
+        console.log('updateGroceryList running. Grocery list is currently: ' + groceryList);
+        console.log('holdingqueue within updateGroceryList is ' + holdingQueue);
+       
         recipe.forEach(function(cur){
                 
             if (!groceryList[0]){
@@ -83,7 +83,6 @@ var dataController = (function(){
                 console.log(recipe[0].ingredientObj.name);
                 i++;
 
-                
             } else if (groceryList.indexOf(cur.ingredientObj) >= 0) {
                 
                 var groceryIndex = groceryList.indexOf(cur.ingredientObj);
@@ -98,20 +97,18 @@ var dataController = (function(){
             };
             
         });
+        
         console.log('Update quantity run ' + updateQuantity + ' times.');
-            console.log('Add ingredient run ' + addIngredient + ' times.');
-        console.log(groceryList);
+        console.log('Add ingredient run ' + addIngredient + ' times.');
     };
     
-    function toArray(){
-        
-    }
-    
     function combineRecipes(){
+        
         recipeQueue.forEach(function(cur){
             cur.forEach(function(cur){
                 holdingQueue.push(cur);
             });
+            console.log('holding queue total is: ' + holdingQueue);
         });
         
     }
@@ -121,16 +118,18 @@ var dataController = (function(){
             var unitType;
             
             if(cur.quantity > 1){
-            unitType = cur.unitPlural;    
+                unitType = cur.unitPlural;    
             } else {
                 unitType = cur.unit;
             };
             
             console.log(cur.quantity + ' ' + unitType + ' ' + cur.name)
-        })
+        });
     };
     
-    
+    function clearHoldingQueue(){
+        holdingQueue = [];
+    }
     
     return {
         ingredients: ingredients,
@@ -140,7 +139,8 @@ var dataController = (function(){
         combineRecipes: combineRecipes,
         compileList: compileList,
         holdingQueue: holdingQueue,
-        updateGroceryList: updateGroceryList
+        updateGroceryList: updateGroceryList,
+        clearHoldingQueue: clearHoldingQueue
     }
 })();
 
@@ -149,7 +149,8 @@ var UIController = (function(){
         HTMLelementIDs:{
             recipeChoices: '#recipeChoices',
             recipeList: '#recipeList',
-            recipeBtns: '#recipeBtns'
+            recipeBtns: '#recipeBtns',
+            groceryList: '#groceryList'
         },
         recipeNames: {
             greenGorilla: 'Green Gorilla (smoothie)',
@@ -189,12 +190,16 @@ function innerHTML(target, newHTML){
 })();
 
 var appController = (function(dataCtrl, UICtrl){
-function updateGroceryList(){
-        UICtrl.addListItem('#groceryList', dataCtrl.groceryList);
+function updateGroceryListUI(){
+        UICtrl.addListItem(UICtrl.HTMLstrings.HTMLelementIDs.groceryList, dataCtrl.groceryList);
     };
-  
+
+function clearGroceryListUI(){
+    document.querySelector(UICtrl.HTMLstrings.HTMLelementIDs.groceryList).innerHTML = '';
+}    
     
 function updateRecipeList(whichRecipe){
+    clearGroceryListUI();
     console.log('running updateRecipeList'); 
     console.log(whichRecipe);
     // 1. Update Recipe UI
@@ -203,17 +208,19 @@ function updateRecipeList(whichRecipe){
     
     // 2. Add recipe to recipe queue
     dataCtrl.recipeQueue.push(dataCtrl.recipes[whichRecipe]);
-    console.log(dataCtrl.recipeQueue);
-    console.log(dataCtrl.holdingQueue);
+    
     
     // 3. Update groceryList
     dataCtrl.combineRecipes();
     
     // 4. Update Grocery List UI
     dataCtrl.updateGroceryList(dataCtrl.holdingQueue);
-    updateGroceryList();
+    updateGroceryListUI();
     dataCtrl.compileList(dataCtrl.groceryList);
         /* UICtrl.addListItem('#recipeList', dataCtrl.groceryList);*/
+    console.log(dataCtrl.recipeQueue);
+    console.log(dataCtrl.holdingQueue);
+    dataCtrl.clearHoldingQueue();
     };
     
     function init(){
@@ -223,7 +230,7 @@ function updateRecipeList(whichRecipe){
     };
     return{
         dataCtrl: dataCtrl,
-        updateGroceryList: updateGroceryList,
+        updateGroceryListUI: updateGroceryListUI,
         updateRecipeList: updateRecipeList,
         init: init
     }
